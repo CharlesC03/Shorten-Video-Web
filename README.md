@@ -5,9 +5,10 @@ This is a web version of the python script [Shorten Videos](https://github.com/C
 > - **Uses [Vue 3](https://v3.vuejs.org/)**
 > - Uses the [wasm version of ffmpeg](https://ffmpegwasm.github.io/)
 
-## Install Packages
-
-Use command `npm i`, this will install all the packages automatically.
+## Install Package
+------------------
+### `npm i`
+This will install all the packages automatically.
 
 ## Start Local Web Server
 -------------------------
