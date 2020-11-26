@@ -5,6 +5,8 @@
     "test": "echo \"This template does not include a test runner by default.\" && exit 1"
   },
   "dependencies": {
+    "@ffmpeg/core": "^0.8.5",
+    "@ffmpeg/ffmpeg": "^0.9.6",
     "vue": "3.0.0"
   },
   "devDependencies": {
