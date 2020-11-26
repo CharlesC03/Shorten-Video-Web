@@ -1,6 +1,6 @@
 # Shorten Video with Vue
 
-This is a web version of the python script [Shorten Videos](https://github.com/CharlesC03/Shorten-Videos) using <a href="https://v3.vuejs.org/" target="_blank">Vue</a>, [Snowpack](https://www.snowpack.dev/).
+This is a web version of the python script [Shorten Videos](https://github.com/CharlesC03/Shorten-Videos) using [Vue](https://v3.vuejs.org/), [Snowpack](https://www.snowpack.dev/).
 
 > This also uses the wasm version of ffmpeg.
 
@@ -17,7 +17,6 @@ Open http://localhost:8080 to view it in the browser.
 
 The page will reload if you make edits.
 You will also see any lint errors in the console.
-
 ### Other Available Scripts
 
 ### `npm test`
