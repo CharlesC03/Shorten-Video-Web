@@ -8,7 +8,9 @@
     <input type="file" accept="video/*" @change="setVideo" />
     <div v-if="video != null">
       Output Name:<input type="text" v-model="outName" /><br />
-      Frame Rate: <input type="number" v-model="videoFPS" min="1" /><br />
+      <p :style="{ color: fpsError.color }">
+        Frame Rate: <input type="number" v-model="videoFPS" :placeholder="fpsError.ph" min="1" />
+      </p>
       <button type="button" @click="toggleAdvanced">Advanced</button><br />
       <div v-if="showAdvanced">
         Frame Margin: <input type="number" v-model="frameMargin" /><br />
@@ -19,7 +21,7 @@
         <button type="button" @click="convertToShort">Shorten</button>
       </div>
       <div v-else>
-        <p>Running...</p>
+        <p>{{ runMess }}</p>
       </div>
     </div>
   </div>
@@ -33,7 +35,8 @@
         video: null,
         videoURL: null,
         videoName: null,
-        videoFPS: null,
+        videoFPS: '',
+        audioURL: null,
         outFile: null,
         outName: null,
         frameMargin: 3, //Frame Margin
@@ -41,32 +44,73 @@
         showAdvanced: false,
         state: false,
         runningShortening: false,
+        hasRun: false,
+        runMess: 'Running...',
+        fpsError: {
+          color: 'black',
+          ph: '',
+        },
+        isActive: false,
       };
     },
     methods: {
       setVideo(e) {
-        this.video = e.target.files?.item(0);
-        this.videoURL = URL.createObjectURL(this.video);
-        this.videoName = this.video.name;
-        const videoName = this.videoName;
-        let temp;
-        if (this.videoName.search('[.]') != -1) {
-          temp = this.videoName.split('.');
-          temp[temp.length - 2] += '_shortened';
-          temp = temp.join('.');
-        } else {
-          temp = `${this.videoName}_shortened.mp4`;
+        if (e.target.files?.item(0) != null) {
+          this.video = e.target.files?.item(0);
+          this.videoURL = URL.createObjectURL(this.video);
+          this.videoName = this.video.name;
+          const videoName = this.videoName;
+          let temp;
+          if (this.videoName.search('[.]') != -1) {
+            temp = this.videoName.split('.');
+            temp[temp.length - 2] += '_shortened';
+            temp = temp.join('.');
+          } else {
+            temp = `${this.videoName}_shortened.mp4`;
+          }
+          this.outName = temp;
         }
-        this.outName = temp;
       },
       toggleAdvanced() {
         this.showAdvanced = !this.showAdvanced;
       },
       async convertToShort() {
-        this.runningShortening = true;
-        ffmpeg.FS('writeFile', 'temp.mp4', await fetchFile(this.video));
-        await ffmpeg.run('-i', 'temp.mp4', 'temp_audio.wav');
-        this.runningShortening = false;
+        if (this.videoFPS.length == 0) {
+          this.fpsError = {
+            color: 'red',
+            ph: 'Required',
+          };
+        } else {
+          this.fpsError = {
+            color: 'black',
+            ph: '',
+          };
+          this.runningShortening = true;
+          ffmpeg.FS('writeFile', 'temp.mp4', await fetchFile(this.video));
+          this.runMess = 'Extracting Audio...';
+          await ffmpeg.run('-i', 'temp.mp4', 'temp_audio.wav');
+          var audioContext = new AudioContext();
+          var analysis = audioContext.createAnalyser();
+          var audioInfo = await audioContext.decodeAudioData(ffmpeg.FS('readFile', 'temp_audio.wav').buffer);
+          console.log(audioInfo);
+          var array = await ffmpeg.FS('readFile', 'temp_audio.wav');
+          analysis.getByteTimeDomainData(array);
+          var max = 0;
+          var min = 0;
+          for (var i = 0; i < array.byteLength * 4; i++) {
+            if (array[i] > max) {
+              max = array[i];
+            } else if (array[i] < min) {
+              min = array[i];
+            }
+          }
+          console.log({ max, min });
+          console.log(analysis.fftSize);
+          console.log(array);
+          this.hasRun = true;
+          this.runningShortening = false;
+          this.runMess = 'Running...';
+        }
       },
     },
     created: async function () {
@@ -75,3 +119,15 @@
     },
   };
 </script>
+
+<style>
+  .Error {
+    color: rgb(196, 16, 16);
+  }
+  .activeClass {
+    color: aquamarine;
+  }
+  .errorClass {
+    color: brown;
+  }
+</style>

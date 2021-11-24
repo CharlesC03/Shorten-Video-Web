@@ -6,12 +6,17 @@
   },
   "dependencies": {
     "@ffmpeg/core": "^0.8.5",
-    "@ffmpeg/ffmpeg": "^0.9.6",
-    "vue": "3.0.0"
+    "@ffmpeg/ffmpeg": "^0.9.8",
+    "fs": "0.0.1-security",
+    "fs-web": "^1.0.1",
+    "meyda": "^5.3.0",
+    "vue": "^3.2.22",
+    "wav": "^1.0.2"
   },
   "devDependencies": {
-    "@snowpack/plugin-dotenv": "^2.0.4",
-    "@snowpack/plugin-vue": "^2.2.5",
-    "snowpack": "^2.17.1"
+    "@snowpack/plugin-dotenv": "^2.2.0",
+    "@snowpack/plugin-vue": "^2.6.2",
+    "rollup-plugin-node-polyfills": "^0.2.1",
+    "snowpack": "^2.18.5"
   }
 }
